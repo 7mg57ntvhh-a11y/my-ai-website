@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My AI</title>
+<style>
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:
+        radial-gradient(circle at top left,#7c3aed 0%,transparent 35%),
+        radial-gradient(circle at top right,#2563eb 0%,transparent 30%),
+        linear-gradient(135deg,#0f172a,#1e1b4b,#312e81);
+    color:#f8fafc;
+    min-height:100vh;
+}
+
+header{
+    background:linear-gradient(90deg,#7c3aed,#2563eb,#db2777);
+    color:white;
+    padding:18px;
+    font-size:22px;
+    font-weight:bold;
+    box-shadow:0 5px 25px rgba(124,58,237,0.35);
+}
+
+.container{
+    max-width:900px;
+    margin:40px auto;
+    padding:20px;
+}
+
+h1{
+    text-align:center;
+    font-size:40px;
+    background:linear-gradient(90deg,#c084fc,#60a5fa,#f472b6);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.subtitle{
+    text-align:center;
+    color:#cbd5e1;
+}
+
+.chat{
+    background:rgba(15,23,42,0.82);
+    border:1px solid rgba(167,139,250,0.35);
+    border-radius:24px;
+    padding:20px;
+    min-height:500px;
+    box-shadow:0 15px 45px rgba(0,0,0,0.35);
+    backdrop-filter:blur(12px);
+}
+
+.message{
+    padding:14px 18px;
+    margin:12px 0;
+    border-radius:16px;
+    max-width:80%;
+}
+
+.user{
+    background:linear-gradient(135deg,#7c3aed,#2563eb);
+    color:white;
+    margin-left:auto;
+    box-shadow:0 5px 18px rgba(124,58,237,0.3);
+}
+
+.ai{
+    background:rgba(139,92,246,0.12);
+    border:1px solid rgba(167,139,250,0.3);
+    color:#f1f5f9;
+}
+
+.input{
+    display:flex;
+    gap:10px;
+}
+
+input{
+    flex:1;
+    padding:15px 18px;
+    border:1px solid rgba(167,139,250,0.4);
+    border-radius:14px;
+    outline:none;
+    box-sizing:border-box;
+    transition:0.2s;
+    font-size:16px;
+    background:rgba(30,41,59,0.9);
+    color:white;
+}
+
+input::placeholder{
+    color:#94a3b8;
+}
+
+input:focus{
+    border-color:#a78bfa;
+    box-shadow:0 0 0 3px rgba(124,58,237,0.2);
+}
+
+button{
+    padding:15px 20px;
+    background:linear-gradient(135deg,#7c3aed,#2563eb);
+    color:white;
+    border:0;
+    border-radius:12px;
+    transition:0.2s;
+    cursor:pointer;
+    font-weight:bold;
+    box-shadow:0 5px 18px rgba(37,99,235,0.3);
+}
+
+button:hover{
+    background:linear-gradient(135deg,#9333ea,#ec4899);
+    transform:translateY(-2px);
+    box-shadow:0 8px 24px rgba(236,72,153,0.3);
+}
+
+.dots{
+    display:inline-block;
+    width:24px;
+    overflow:hidden;
+    vertical-align:bottom;
+    animation:dots 1.2s steps(4,end) infinite;
+}
+
+@keyframes dots{
+    0%{width:0;}
+    25%{width:8px;}
+    50%{width:16px;}
+    75%{width:24px;}
+    100%{width:0;}
+}
+
+#tasks label{
+    display:block;
+    padding:16px;
+    margin:12px 0;
+    background:linear-gradient(135deg,#7c3aed,#2563eb);
+    border:1px solid rgba(255,255,255,0.25);
+    border-radius:16px;
+    cursor:pointer;
+    transition:0.25s;
+    box-shadow:0 8px 25px rgba(0,0,0,0.25);
+    color:white;
+    font-weight:bold;
+}
+
+#tasks label:hover{
+    background:linear-gradient(135deg,#9333ea,#ec4899);
+    transform:translateY(-3px) scale(1.01);
+    box-shadow:0 10px 30px rgba(236,72,153,0.3);
+}
+
+@media (max-width:600px){
+    .container{
+        width:95%;
+        padding:15px;
+        box-sizing:border-box;
+    }
+
+    button{
+        font-size:15px;
+    }
+
+    h1{
+        font-size:28px;
+    }
+
+    .message{
+        max-width:85%;
+    }
+
+    .input{
+        flex-direction:column;
+    }
+}
+</style>
+</head>
+<body>
+<header>
+  🤖 My AI
+  <button onclick="goToDashboard()">🏠 Dashboard</button>
+</header>
+<div class="container">
+<h1 style="color:#5b21b6;">My AI Assistant</h1>
+<p class="subtitle" style="color:#6d5aa8;">Ask your AI assistant anything.</p>
+<div class="chat">
+<button onclick="clearChat()" style="margin:10px;padding:10px 16px;font-size:14px;">New Chat</button>
+<div id="messages"></div>
+<div class="input">
+    <input id="userInput" placeholder="Message My AI...">
+    <button onclick="sendMessage()" style="background:#7c3aed;transition:0.2s;padding:15px 24px;font-size:16px;" onmouseover="this.style.transform='translateY(-1px)';this.style.background='#8b5cf6'" onmouseout="this.style.transform='translateY(0)';this.style.background='#7c3aed'">Send</button>
+</div>
+</div>
+<script>
+let chatHistory = JSON.parse(localStorage.getItem("myAIChat")) || [];
+let currentProjectIndex = null;
+
+function saveChat() {
+    localStorage.setItem("myAIChat", JSON.stringify(chatHistory));
+}
+function loadChat() {
+    let messages = document.getElementById("messages");
+
+    messages.innerHTML = "";
+
+    chatHistory.forEach(message => {
+        let bubble = document.createElement("div");
+
+        if (typeof message === "string") {
+            bubble.className = "message user";
+            bubble.textContent = message;
+        } else {
+            bubble.className = message.role === "user" ? "message user" : "message ai";
+            bubble.textContent = message.text;
+        }
+
+        messages.appendChild(bubble);
+    });
+}
+function goToDashboard() {
+    document.querySelector(".container").innerHTML = `
+        <h1>Welcome 👋</h1>
+        <p class="subtitle">What are you building?</p>
+
+        <div style="text-align:center; margin:30px 0;">
+            <button onclick="createProject()">＋ Create New Project</button>
+        </div>
+
+        <h2>📁 My Projects</h2>
+
+        <div id="projects"></div>
+    `;
+    displayProjects();
+}
+
+function createProject() {
+    let projectName = prompt("What do you want to call your project?");
+
+    if (!projectName) return;
+
+    let projects = JSON.parse(localStorage.getItem("myAIProjects")) || [];
+
+    projects.push(projectName);
+
+    localStorage.setItem("myAIProjects", JSON.stringify(projects));
+
+    displayProjects();
+}
+
+function displayProjects() {
+    let projects = JSON.parse(localStorage.getItem("myAIProjects")) || [];
+    let projectContainer = document.getElementById("projects");
+
+    if (!projectContainer) return;
+
+    projectContainer.innerHTML = "";
+
+    let savedTasks = JSON.parse(localStorage.getItem("myAITasks")) || {};
+    let savedTypes =
+    JSON.parse(localStorage.getItem("myAIProjectTypes")) || {};
+
+    projects.forEach((projectName, index) => {
+        let tasks = savedTasks[index] || [];
+        let projectType = savedTypes[index] || "Website";
+        let completed = tasks.filter(task => task === true).length;
+        let progress = Math.round((completed / 5) * 100);
+
+        let project = document.createElement("button");
+
+        project.style.display = "block";
+        project.style.width = "100%";
+        project.style.margin = "15px 0";
+        project.style.padding = "24px";
+        project.style.textAlign = "left";
+        project.style.background = "white";
+        project.style.color = "#222";
+        project.style.border = "2px solid #ddd6fe";
+        project.style.borderRadius = "20px";
+        project.style.boxShadow = "0 6px 16px rgba(124,58,237,0.14)";
+        project.style.transition = "transform 0.15s ease, box-shadow 0.15s ease";
+        project.style.cursor = "pointer";
+        project.onmouseenter = function() {
+    project.style.transform = "translateY(-2px)";
+    project.style.boxShadow = "0 8px 20px rgba(0,0,0,0.12)";
+};
+project.innerHTML = `
+    <div style="font-size:22px;font-weight:bold;color:#5b21b6;">
+        📁 ${projectName}
+    </div>
+    <div style="margin-top:8px;color:#777;">
+        Website
+    </div>
+    <div style="margin-top:15px;background:#eee;border-radius:10px;height:10px;">
+        <div style="width:0%;height:100%;background:#7c3aed;border-radius:10px;"></div>
+    </div>
+    <div style="margin-top:8px;color:#777;font-size:14px;">
+        0% complete
+    </div>
+`;
+
+projectContainer.appendChild(project);
+project.onmouseleave = function() {
+    project.style.transform = "translateY(0)";
+    project.style.boxShadow = "0 4px 12px rgba(0,0,0,0.08)";
+};
+
+        project.innerHTML = `
+            <div style="font-size:20px;font-weight:bold;color:#5b21b6;">
+                📁 ${projectName}
+            </div>
+            
+            <div style="color:#6d5aa8;margin-top:8px;">
+                🚀 Project Workspace
+            </div>
+
+           <div style="margin-top:15px;font-weight:bold;color:#5b21b6;">
+    Progress: ${progress}%
+</div>
+
+            <div style="background:#ddd6fe;border-radius:10px;height:10px;margin-top:8px;">
+                <div style="background:#7c3aed;width:${progress}%;height:10px;border-radius:10px;"></div>
+            </div>
+
+            <div style="color:#555;margin-top:8px;">
+    🏷️ ${projectType}
+</div>
+            <div style="color:#6d5aa8;margin-top:8px;">
+                ${completed}/5 tasks completed
+            </div>
+           <div style="margin-top:15px;">
+            
+    <button
+    onclick="renameProject(event, ${index})"
+    style="background:#111;color:white;padding:8px 12px;border:0;border-radius:8px;cursor:pointer;">
+    ✏️ Rename
+<button
+    onclick="openProjectSettings(event, ${index})"
+    style="margin-left:8px;background:#eee;color:#222;padding:8px 12px;border:0;border-radius:8px;cursor:pointer;">
+    ⚙️ Settings
+</button>
+
+    <button
+    onclick="deleteProject(event, ${index})"
+    style="margin-left:8px;background:#ddd;color:#222;padding:8px 12px;border:0;border-radius:8px;cursor:pointer;">
+    🗑️ Delete
+</button>
+</div>
+        `;
+
+     project.onclick = function() {
+    project.style.transform = "scale(0.98)";
+    setTimeout(() => {
+        openProject(index);
+    }, 100);
+};
+
+        projectContainer.appendChild(project);
+    });
+}
+function openProject(index) {
+    currentProjectIndex = index;
+    let projects = JSON.parse(localStorage.getItem("myAIProjects")) || [];
+    let projectName = projects[index];
+    let savedDescriptions =
+    JSON.parse(localStorage.getItem("myAIProjectDescriptions")) || {};
+
+let projectDescription =
+    savedDescriptions[index] || "";
+
+    document.querySelector(".container").innerHTML = `
+        <h1 style="margin-bottom:5px;">💻 ${projectName}</h1>
+        <p class="subtitle">Your AI Project Workspace</p>
+        <div style="margin:25px 0;padding:20px;background:rgba(15,23,42,0.82);border:1px solid #ddd;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+   <strong id="progressText" style="color:#ffffff;">Progress: 0%</strong>
+  <div id="progressBar" style="background:#8b5cf6;width:0%;height:12px;border-radius:10px;"></div>
+    </div>
+</div>
+<h2 style="margin-top:30px;">✅ Tasks</h2>
+
+<div id="tasks">
+    <label>
+        <input type="checkbox" onchange="updateProgress()">
+        Create project
+    </label>
+
+    <br><br>
+
+    <label>
+        <input type="checkbox" onchange="updateProgress()">
+        Build the website
+    </label>
+
+    <br><br>
+
+    <label>
+        <input type="checkbox" onchange="updateProgress()">
+        Connect AI
+    </label>
+
+    <br><br>
+
+    <label>
+        <input type="checkbox" onchange="updateProgress()">
+        Test everything
+    </label>
+
+    <br><br>
+
+    <label>
+        <input type="checkbox" onchange="updateProgress()">
+        Launch 🚀
+    </label>
+</div>
+
+        <div class="chat">
+            <div class="message ai">
+                👋 Welcome to your project! Let's build it together.
+            </div>
+        </div>
+        <h2>📝 Project Notes</h2>
+        <h2 style="margin-top:30px;">🤖 AI Project Partner</h2>
+
+<div style="margin:25px 0;padding:20px;background:linear-gradient(135deg,rgba(124,58,237,0.35),rgba(37,99,235,0.3),rgba(219,39,119,0.25));border:1px solid #ddd;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+
+    <p style="color:#777;margin-top:0;">
+        Your AI partner will help you build this project.
+    </p>
+<div id="projectAIMessage" style="margin:15px 0;max-height:350px;overflow-y:auto;padding:16px;background:rgba(15,23,42,0.6);border:1px solid rgba(167,139,250,0.3);border-radius:14px;color:#f8fafc;">
+        👋 I'm ready to help with your project!
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:15px;">
+        <input
+            id="projectAIInput"
+            placeholder="Ask your AI project partner..."
+            style="flex:1;padding:14px;border:1px solid rgba(167,139,250,0.4);border-radius:12px;box-sizing:border-box;background:rgba(15,23,42,0.85);color:white;outline:none;"
+        >
+
+        <button onclick="askProjectAI()">
+            Ask AI 🤖
+        </button>
+    </div>
+
+</div>
+<textarea
+    id="projectNotes"
+    placeholder="Write notes about your project..."
+ style="width:100%;min-height:180px;padding:16px;border:1px solid rgba(167,139,250,0.4);border-radius:14px;box-sizing:border-box;font-family:Arial;font-size:15px;resize:vertical;background:rgba(15,23,42,0.85);color:white;outline:none;"
+></textarea>
+
+<br><br>
+
+<button onclick="saveProjectNotes()">💾 Save Notes</button>
+
+        <button onclick="goToDashboard()">🏠 Back to Dashboard</button>
+    `;
+    loadProjectTasks();
+loadProjectNotes();
+loadProjectAIChat();
+}
+function loadProjectTasks() {
+    let savedTasks = JSON.parse(localStorage.getItem("myAITasks")) || {};
+    let tasks = savedTasks[currentProjectIndex] || [];
+
+    let checkboxes = document.querySelectorAll("#tasks input[type='checkbox']");
+
+    checkboxes.forEach((box, index) => {
+        box.checked = tasks[index] || false;
+    });
+
+    updateProgress();
+}
+function updateProgress() {
+    let checkboxes = document.querySelectorAll("#tasks input[type='checkbox']");
+    let completed = 0;
+
+    let savedTasks = JSON.parse(localStorage.getItem("myAITasks")) || {};
+
+    checkboxes.forEach((box, index) => {
+        if (box.checked) {
+            completed++;
+        }
+
+        if (!savedTasks[currentProjectIndex]) {
+            savedTasks[currentProjectIndex] = [];
+        }
+
+        savedTasks[currentProjectIndex][index] = box.checked;
+    });
+
+    localStorage.setItem("myAITasks", JSON.stringify(savedTasks));
+
+    let progress = Math.round((completed / checkboxes.length) * 100);
+
+    document.querySelector("#progressText").textContent =
+        "Progress: " + progress + "%";
+
+    document.querySelector("#progressBar").style.width =
+        progress + "%";
+}
+function deleteProject(event, index) {
+    event.stopPropagation();
+
+    let projects = JSON.parse(localStorage.getItem("myAIProjects")) || [];
+
+    if (!confirm("Delete this project?")) return;
+
+    projects.splice(index, 1);
+
+    localStorage.setItem("myAIProjects", JSON.stringify(projects));
+
+    let savedTasks = JSON.parse(localStorage.getItem("myAITasks")) || {};
+    savedTasks = Object.fromEntries(
+    Object.entries(savedTasks)
+        .filter(([key]) => Number(key) !== index)
+        .map(([key, value]) => [
+            Number(key) > index ? Number(key) - 1 : Number(key),
+            value
+        ])
+);
+
+    localStorage.setItem("myAITasks", JSON.stringify(savedTasks));
+
+    displayProjects();
+}
+function renameProject(event, index) {
+    event.stopPropagation();
+
+    let projects = JSON.parse(localStorage.getItem("myAIProjects")) || [];
+
+    let newName = prompt("What should this project be called?", projects[index]);
+
+    if (!newName || !newName.trim()) return;
+
+    projects[index] = newName.trim();
+
+    localStorage.setItem("myAIProjects", JSON.stringify(projects));
+
+    displayProjects();
+}
+function openProjectSettings(event, index) {
+    event.stopPropagation();
+
+    let projects = JSON.parse(localStorage.getItem("myAIProjects")) || [];
+    let projectName = projects[index];
+
+    let savedDescriptions =
+        JSON.parse(localStorage.getItem("myAIProjectDescriptions")) || {};
+
+    let projectDescription = savedDescriptions[index] || "";
+    let savedTypes =
+    JSON.parse(localStorage.getItem("myAIProjectTypes")) || {};
+
+let projectType = savedTypes[index] || "Website";
+
+let settingsHTML = `
+    <div id="projectSettingsOverlay"
+         style="position:fixed;top:0;left:0;width:100%;height:100%;
+                background:rgba(0,0,0,0.45);display:flex;
+                align-items:center;justify-content:center;z-index:9999;">
+                <div style="background:white;width:90%;max-width:500px;
+            padding:25px;border-radius:18px;
+            box-shadow:0 10px 30px rgba(0,0,0,0.2);">
+
+    <h2 style="margin-top:0;">⚙️ Project Settings</h2>
+
+    <p style="color:#777;margin-bottom:10px;">
+        Settings for <strong>${projectName}</strong>
+    </p>
+    <label style="display:block;font-weight:bold;margin-bottom:8px;">
+    📋 Project Description
+</label>
+
+<textarea
+    id="projectDescription"
+    placeholder="What is this project about?"
+    style="width:100%;min-height:100px;padding:12px;border:1px solid #ccc;border-radius:10px;box-sizing:border-box;resize:vertical;font-family:Arial;"
+>${projectDescription}</textarea>
+<label style="display:block;font-weight:bold;margin-top:18px;margin-bottom:8px;">
+    🏷️ Project Type
+</label>
+
+<select
+    id="projectType"
+    style="width:100%;padding:12px;border:1px solid #ccc;border-radius:10px;box-sizing:border-box;">
+    <option value="Website" ${projectType === "Website" ? "selected" : ""}>🌐 Website</option>
+<option value="Gaming" ${projectType === "Gaming" ? "selected" : ""}>🎮 Gaming</option>
+<option value="App" ${projectType === "App" ? "selected" : ""}>📱 App</option>
+<option value="Business" ${projectType === "Business" ? "selected" : ""}>💼 Business</option>
+<option value="AI Project" ${projectType === "AI Project" ? "selected" : ""}>🤖 AI Project</option>
+<option value="Other" ${projectType === "Other" ? "selected" : ""}>✨ Other</option>
+</select>
+
+<button
+    onclick="saveProjectDescription(${index})"
+    style="margin-top:15px;margin-right:8px;padding:10px 16px;border:0;border-radius:8px;background:#111;color:white;cursor:pointer;">
+    💾 Save Settings
+</button>
+<button
+    onclick="resetProjectSettings(${index})"
+    style="margin-top:15px;margin-right:8px;padding:10px 16px;border:0;border-radius:8px;background:#fee;color:#b00;cursor:pointer;">
+    🗑️ Reset Settings
+</button>
+
+<button
+    onclick="closeProjectSettings()"
+    style="margin-top:15px;padding:10px 16px;border:0;border-radius:8px;background:#eee;color:#222;cursor:pointer;">
+    Done
+</button>
+   
+
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML("beforeend", settingsHTML);
+}
+function saveProjectDescription(index) {
+    let description = document.getElementById("projectDescription").value;
+    let projectType = document.getElementById("projectType").value;
+
+    let savedDescriptions =
+        JSON.parse(localStorage.getItem("myAIProjectDescriptions")) || {};
+
+    savedDescriptions[index] = description;
+    let savedTypes =
+    JSON.parse(localStorage.getItem("myAIProjectTypes")) || {};
+
+savedTypes[index] = projectType;
+
+localStorage.setItem(
+    "myAIProjectTypes",
+    JSON.stringify(savedTypes)
+);
+
+    localStorage.setItem(
+        "myAIProjectDescriptions",
+        JSON.stringify(savedDescriptions)
+    );
+
+    displayProjects();
+    alert("📋 Project description saved!");
+}
+function resetProjectSettings(index) {
+    let savedDescriptions =
+        JSON.parse(localStorage.getItem("myAIProjectDescriptions")) || {};
+
+    let savedTypes =
+        JSON.parse(localStorage.getItem("myAIProjectTypes")) || {};
+
+    delete savedDescriptions[index];
+    delete savedTypes[index];
+
+    localStorage.setItem(
+        "myAIProjectDescriptions",
+        JSON.stringify(savedDescriptions)
+    );
+
+    localStorage.setItem(
+        "myAIProjectTypes",
+        JSON.stringify(savedTypes)
+    );
+
+    closeProjectSettings();
+
+    alert("🗑️ Project settings reset!");
+}
+function closeProjectSettings() {
+    let overlay = document.getElementById("projectSettingsOverlay");
+
+    if (overlay) {
+        overlay.remove();
+    }
+}
+function askProjectAI() {
+    let input = document.getElementById("projectAIInput");
+    let messageBox = document.getElementById("projectAIMessage");
+
+    let text = input.value.trim();
+
+    if (!text) return;
+
+    let savedChats = JSON.parse(localStorage.getItem("myAIProjectChats")) || {};
+
+    if (!savedChats[currentProjectIndex]) {
+        savedChats[currentProjectIndex] = [];
+    }
+
+    let aiText = "🤖 I received your message: " + text;
+
+    let userMessage = document.createElement("div");
+    userMessage.className = "message user";
+    userMessage.textContent = text;
+
+    messageBox.appendChild(userMessage);
+
+    input.value = "";
+
+    let thinkingMessage = document.createElement("div");
+    thinkingMessage.className = "message ai";
+    thinkingMessage.textContent = "🤖 Thinking...";
+
+    messageBox.appendChild(thinkingMessage);
+
+    setTimeout(() => {
+        thinkingMessage.textContent = aiText;
+
+        savedChats[currentProjectIndex].push({
+            user: text,
+            ai: aiText
+        });
+
+        localStorage.setItem(
+            "myAIProjectChats",
+            JSON.stringify(savedChats)
+        );
+    }, 1000);
+}
+function saveProjectNotes() {
+    let notes = document.getElementById("projectNotes").value;
+
+    let savedNotes = JSON.parse(localStorage.getItem("myAINotes")) || {};
+
+    savedNotes[currentProjectIndex] = notes;
+
+    localStorage.setItem("myAINotes", JSON.stringify(savedNotes));
+
+    alert("Notes saved! 💾");
+}
+function loadProjectNotes() {
+    let savedNotes = JSON.parse(localStorage.getItem("myAINotes")) || {};
+    let notes = savedNotes[currentProjectIndex] || "";
+
+    let notesBox = document.getElementById("projectNotes");
+
+    if (notesBox) {
+        notesBox.value = notes;
+    }
+}
+function loadProjectAIChat() {
+    let savedChats = JSON.parse(localStorage.getItem("myAIProjectChats")) || {};
+    let chats = savedChats[currentProjectIndex] || [];
+
+    let messageBox = document.getElementById("projectAIMessage");
+
+    if (!messageBox) return;
+
+    messageBox.innerHTML = "";
+
+    if (chats.length === 0) {
+        messageBox.innerHTML = "👋 I'm ready to help with your project!";
+        return;
+    }
+
+    chats.forEach(chat => {
+        let userMessage = document.createElement("div");
+        userMessage.className = "message user";
+        userMessage.textContent = chat.user;
+
+        let aiMessage = document.createElement("div");
+        aiMessage.className = "message ai";
+        aiMessage.textContent = chat.ai;
+
+        messageBox.appendChild(userMessage);
+        messageBox.appendChild(aiMessage);
+    });
+}
+
+function sendMessage(){
+    let input = document.getElementById("userInput");
+    let messages = document.getElementById("messages");
+    let text = input.value.trim();
+
+    if(!text) return;
+
+    // Show user message
+    let user = document.createElement("div");
+    user.className = "message user";
+    user.textContent = text;
+    messages.appendChild(user);
+
+    // Save user message
+    chatHistory.push({
+        role: "user",
+        text: text
+    });
+    saveChat();
+
+    input.value = "";
+
+    fetch("/api/chat", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        message: text
+    })
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error("API request failed");
+    }
+    return response.json();
+})
+.then(data => {
+    let ai = document.createElement("div");
+    ai.className = "message ai";
+    ai.textContent = data.reply;
+    messages.appendChild(ai);
+
+    chatHistory.push({
+        role: "ai",
+        text: data.reply
+    });
+    saveChat();
+})
+.catch(error => {
+    console.error(error);
+
+    let ai = document.createElement("div");
+    ai.className = "message ai";
+    ai.textContent = "AI is temporarily unavailable. Please try again later. 🤖";
+    messages.appendChild(ai);
+
+    chatHistory.push({
+        role: "ai",
+        text: "AI is temporarily unavailable. Please try again later. 🤖"
+    });
+    saveChat();
+});
+}
+
+document.getElementById("userInput").addEventListener("keydown",e=>{
+if(e.key==="Enter")sendMessage();
+});
+
+loadChat();
+</script>
+
