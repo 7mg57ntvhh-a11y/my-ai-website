@@ -771,6 +771,16 @@ function loadProjectAIChat() {
     });
 }
 
+function clearChat() {
+    chatHistory = [];
+    localStorage.removeItem("myAIChat");
+
+    const messages = document.getElementById("messages");
+    if (messages) {
+        messages.innerHTML = "";
+    }
+}
+
 function sendMessage(){
     let input = document.getElementById("userInput");
     let messages = document.getElementById("messages");
