@@ -9,22 +9,22 @@ body{
     margin:0;
     font-family:Arial,sans-serif;
     background:
-        radial-gradient(circle at top left,#7c3aed 0%,transparent 35%),
-        radial-gradient(circle at top right,#2563eb 0%,transparent 30%),
-        linear-gradient(135deg,#0f172a,#1e1b4b,#312e81);
+      radial-gradient(circle at 15% 10%,rgba(124,58,237,.30),transparent 32%),
+        radial-gradient(circle at 85% 15%,rgba(37,99,235,.18),transparent 25%),
+        linear-gradient(135deg,#070b14,#0d1220,#111827);
     color:#f8fafc;
     min-height:100vh;
 }
-
 header{
-    background:linear-gradient(90deg,#7c3aed,#2563eb,#db2777);
+    background:rgba(10,15,28,.85);
     color:white;
     padding:18px;
     font-size:22px;
     font-weight:bold;
-    box-shadow:0 5px 25px rgba(124,58,237,0.35);
+    box-shadow:0 5px 25px rgba(0,0,0,.35);
+    border-bottom:1px solid rgba(255,255,255,.08);
+    backdrop-filter:blur(12px);
 }
-
 .container{
     max-width:900px;
     margin:40px auto;
@@ -45,13 +45,13 @@ h1{
 }
 
 .chat{
-    background:rgba(15,23,42,0.82);
-    border:1px solid rgba(167,139,250,0.35);
+    background:rgba(10,15,28,.72);
+    border:1px solid rgba(255,255,255,.08);
     border-radius:24px;
     padding:20px;
     min-height:500px;
-    box-shadow:0 15px 45px rgba(0,0,0,0.35);
-    backdrop-filter:blur(12px);
+    box-shadow:0 20px 60px rgba(0,0,0,.45);
+    backdrop-filter:blur(18px);
 }
 
 .message{
@@ -82,16 +82,16 @@ h1{
 input{
     flex:1;
     padding:15px 18px;
-    border:1px solid rgba(167,139,250,0.4);
+    border:1px solid rgba(255,255,255,.1);
     border-radius:14px;
     outline:none;
     box-sizing:border-box;
     transition:0.2s;
     font-size:16px;
-    background:rgba(30,41,59,0.9);
+    background:rgba(10,15,28,.85);
     color:white;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
 }
-
 input::placeholder{
     color:#94a3b8;
 }
@@ -103,14 +103,14 @@ input:focus{
 
 button{
     padding:15px 20px;
-    background:linear-gradient(135deg,#7c3aed,#2563eb);
+    background:linear-gradient(135deg,#2563eb,#4f46e5);
     color:white;
-    border:0;
+    border:1px solid rgba(255,255,255,.1);
     border-radius:12px;
     transition:0.2s;
     cursor:pointer;
     font-weight:bold;
-    box-shadow:0 5px 18px rgba(37,99,235,0.3);
+    box-shadow:0 8px 25px rgba(37,99,235,.25);
 }
 
 button:hover{
@@ -186,8 +186,8 @@ button:hover{
   <button onclick="goToDashboard()">🏠 Dashboard</button>
 </header>
 <div class="container">
-<h1 style="color:#5b21b6;">My AI Assistant</h1>
-<p class="subtitle" style="color:#6d5aa8;">Ask your AI assistant anything.</p>
+<h1 style="color:#f8fafc;">My AI Assistant</h1>
+<p class="subtitle" style="color:#c4b5fd;">Ask your AI assistant anything.</p>
 <div class="chat">
 <button onclick="clearChat()" style="margin:10px;padding:10px 16px;font-size:14px;">New Chat</button>
 <div id="messages"></div>
@@ -224,20 +224,42 @@ function loadChat() {
 }
 function goToDashboard() {
     document.querySelector(".container").innerHTML = `
-        <h1>Welcome 👋</h1>
-        <p class="subtitle">What are you building?</p>
+       <div style="position:relative; display:flex; justify-content:center; align-items:center; margin-bottom:20px;">
+
+    <h1 style="background:linear-gradient(90deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
+        Welcome 👋
+    </h1>
+
+    <div style="position:absolute;right:0;display:flex;gap:10px;">
+
+        <button
+            onclick="goToAI()"
+            style="display:block !important;visibility:visible !important;color:white;background:linear-gradient(135deg,#2563eb,#4f46e5);padding:12px 18px;border-radius:12px;border:1px solid rgba(255,255,255,.1);cursor:pointer;box-shadow:0 8px 25px rgba(37,99,235,.25);">
+            🤖 AI Assistant
+        </button>
+
+        <button
+            onclick="goToAI()"
+            style="display:block !important;visibility:visible !important;color:white;background:linear-gradient(135deg,#2563eb,#4f46e5);padding:12px 18px;border-radius:12px;border:1px solid rgba(255,255,255,.1);cursor:pointer;box-shadow:0 8px 25px rgba(37,99,235,.25);">
+            🏠 Home
+        </button>
+
+    </div>
+
+</div>
+
+      <p class="subtitle" style="color:#c4b5fd;">What are you building?</p>
 
         <div style="text-align:center; margin:30px 0;">
-            <button onclick="createProject()">＋ Create New Project</button>
+          <button onclick="createProject()" style="padding:16px 24px;font-size:16px;box-shadow:0 10px 30px rgba(37,99,235,.3);">＋ Create New Project</button>
         </div>
-
-        <h2>📁 My Projects</h2>
+<h2 style="color:#c4b5fd;">📁 My Projects</h2>
 
         <div id="projects"></div>
     `;
+
     displayProjects();
 }
-
 function createProject() {
     let projectName = prompt("What do you want to call your project?");
 
@@ -275,23 +297,23 @@ function displayProjects() {
         project.style.display = "block";
         project.style.width = "100%";
         project.style.margin = "15px 0";
-        project.style.padding = "24px";
+        project.style.padding = "26px";
         project.style.textAlign = "left";
-        project.style.background = "white";
-        project.style.color = "#222";
-        project.style.border = "2px solid #ddd6fe";
+        project.style.background = "rgba(10,15,28,.82)";
+        project.style.color = "#f8fafc";
+       project.style.border = "1px solid rgba(167,139,250,.25)";
         project.style.borderRadius = "20px";
         project.style.boxShadow = "0 6px 16px rgba(124,58,237,0.14)";
         project.style.transition = "transform 0.15s ease, box-shadow 0.15s ease";
         project.style.cursor = "pointer";
         project.onmouseenter = function() {
     project.style.transform = "translateY(-2px)";
-    project.style.boxShadow = "0 8px 20px rgba(0,0,0,0.12)";
+    project.style.boxShadow = "0 12px 30px rgba(124,58,237,.28)";
 };
 project.innerHTML = `
-    <div style="font-size:22px;font-weight:bold;color:#5b21b6;">
-        📁 ${projectName}
-    </div>
+   <div style="font-size:22px;font-weight:bold;color:#f8fafc;">
+    📁 ${projectName}
+</div>
     <div style="margin-top:8px;color:#777;">
         Website
     </div>
@@ -310,20 +332,19 @@ project.onmouseleave = function() {
 };
 
         project.innerHTML = `
-            <div style="font-size:20px;font-weight:bold;color:#5b21b6;">
-                📁 ${projectName}
-            </div>
-            
-            <div style="color:#6d5aa8;margin-top:8px;">
-                🚀 Project Workspace
-            </div>
+            <div style="font-size:20px;font-weight:bold;color:#f8fafc;">
+    📁 ${projectName}
+</div>
 
-           <div style="margin-top:15px;font-weight:bold;color:#5b21b6;">
+<div style="color:#a78bfa;margin-top:8px;">
+    🚀 Project Workspace
+</div>
+          <div style="margin-top:15px;font-weight:bold;color:#a78bfa;">
     Progress: ${progress}%
 </div>
 
             <div style="background:#ddd6fe;border-radius:10px;height:10px;margin-top:8px;">
-                <div style="background:#7c3aed;width:${progress}%;height:10px;border-radius:10px;"></div>
+               <div style="background:linear-gradient(90deg,#2563eb,#7c3aed);width:${progress}%;height:10px;border-radius:10px;"></div>
             </div>
 
             <div style="color:#555;margin-top:8px;">
@@ -336,17 +357,19 @@ project.onmouseleave = function() {
             
     <button
     onclick="renameProject(event, ${index})"
-    style="background:#111;color:white;padding:8px 12px;border:0;border-radius:8px;cursor:pointer;">
-    ✏️ Rename
+   style="background:linear-gradient(135deg,#2563eb,#4f46e5);color:white;padding:8px 12px;border:1px solid rgba(255,255,255,.1);border-radius:8px;cursor:pointer;">
+   ✏️ Rename
+</button>
+
 <button
     onclick="openProjectSettings(event, ${index})"
-    style="margin-left:8px;background:#eee;color:#222;padding:8px 12px;border:0;border-radius:8px;cursor:pointer;">
+    style="margin-left:8px;background:rgba(124,58,237,.18);color:#c4b5fd;padding:8px 12px;border:1px solid rgba(167,139,250,.35);border-radius:8px;cursor:pointer;"">
     ⚙️ Settings
 </button>
 
     <button
     onclick="deleteProject(event, ${index})"
-    style="margin-left:8px;background:#ddd;color:#222;padding:8px 12px;border:0;border-radius:8px;cursor:pointer;">
+  style="margin-left:8px;background:rgba(239,68,68,.15);color:#fca5a5;padding:8px 12px;border:1px solid rgba(239,68,68,.35);border-radius:8px;cursor:pointer;"">
     🗑️ Delete
 </button>
 </div>
@@ -780,6 +803,11 @@ function clearChat() {
         messages.innerHTML = "";
     }
 }
+
+function goToAI() {
+    window.location.reload();
+}
+
 
 function sendMessage(){
     let input = document.getElementById("userInput");
