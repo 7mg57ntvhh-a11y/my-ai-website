@@ -776,13 +776,14 @@ function askProjectAI() {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            message:
-                "You are the AI Project Partner inside my website called My AI. " +
-                "Your job is to help the user improve, build, debug, design, and grow their project. " +
-                "Give practical, specific suggestions based on what the user says. " +
-                "Do not ask unnecessary questions. " +
-                "Keep your answer clear and useful. " +
-                "User says: " + text
+           message:
+    "You are the AI Project Partner for My AI. " +
+    "Give helpful, practical answers about the user's project. " +
+    "Keep every response short: 2–5 sentences maximum. " +
+    "If the user asks for an idea, give 1–3 ideas with a brief explanation. " +
+    "Do not give long plans, timelines, tech stacks, or huge lists unless the user specifically asks for them. " +
+    "Be conversational and useful. " +
+    "User says: " + text
         })
     })
     .then(response => response.json())
