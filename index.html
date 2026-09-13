@@ -602,26 +602,7 @@ function renameProject(event, index) {
 
     let projects = JSON.parse(localStorage.getItem("myAIProjects")) || [];
 
-    let newName = prompt("What should this project be called?", projects[index]);
-
-    if (!newName || !newName.trim()) return;
-
-    projects[index] = newName.trim();
-
-    localStorage.setItem("myAIProjects", JSON.stringify(projects));
-
-    displayProjects();
-}
-function openProjectSettings(event, index) {
-    event.stopPropagation();
-
-    let projects = JSON.parse(localStorage.getItem("myAIProjects")) || [];
-    let savedTypes = JSON.parse(localStorage.getItem("myAIProjectTypes")) || {};
-
-    let projectName = projects[index] || "Project";
-    let projectType = savedTypes[index] || "Website";
-
-    const overlay = document.createElement("div");
+    let overlay = document.createElement("div");
 
     overlay.innerHTML = `
         <div style="
@@ -640,70 +621,57 @@ function openProjectSettings(event, index) {
                 border:1px solid rgba(167,139,250,.3);
                 border-radius:20px;
                 padding:25px;
+                box-shadow:0 20px 60px rgba(0,0,0,.6);
+                text-align:center;
                 color:#f8fafc;
             ">
+                <div style="font-size:38px;margin-bottom:10px;">✏️</div>
 
-                <h2>⚙️ Project Settings</h2>
-
-                <label>🏷️ Project Name</label>
+                <h2 style="margin:0;">Rename Project</h2>
 
                 <input
-                    id="settingsProjectName"
-                    value="${projectName.replace(/"/g, "&quot;")}"
-                    style="width:100%;padding:12px;box-sizing:border-box;margin:8px 0 18px;"
+                    id="renameProjectInput"
+                    value="${projects[index] || ""}"
+                    style="
+                        width:100%;
+                        box-sizing:border-box;
+                        padding:12px;
+                        margin:18px 0;
+                        border-radius:10px;
+                        border:1px solid rgba(167,139,250,.35);
+                        background:rgba(10,15,28,.85);
+                        color:white;
+                    "
                 >
 
-                <label>📋 Project Type</label>
-
-                <select
-                    id="settingsProjectType"
-                    style="width:100%;padding:12px;margin-top:8px;"
-                >
-                    <option value="Website">Website</option>
-                    <option value="Gaming">Gaming</option>
-                    <option value="App">App</option>
-                    <option value="Business">Business</option>
-                    <option value="AI Project">AI Project</option>
-                    <option value="Other">Other</option>
-                </select>
-
-                <div style="display:flex;gap:10px;margin-top:20px;">
-                    <button
-                        id="cancelProjectSettings"
-                        style="flex:1;padding:12px;border-radius:10px;cursor:pointer;">
+                <div style="display:flex;gap:10px;">
+                    <button id="cancelRename"
+                    style="flex:1;">
                         Cancel
                     </button>
 
-                    <button
-                        id="saveProjectSettings"
-                        style="flex:1;padding:12px;border-radius:10px;cursor:pointer;">
-                        💾 Save Changes
+                    <button id="saveRename" style="flex:1;">
+                        💾 Save
                     </button>
                 </div>
-
             </div>
         </div>
     `;
 
     document.body.appendChild(overlay);
 
-    document.getElementById("settingsProjectType").value = projectType;
-
-    document.getElementById("cancelProjectSettings").onclick = function() {
+    document.getElementById("cancelRename").onclick = function() {
         overlay.remove();
     };
 
-    document.getElementById("saveProjectSettings").onclick = function() {
-        let newName = document.getElementById("settingsProjectName").value.trim();
-        let newType = document.getElementById("settingsProjectType").value;
+    document.getElementById("saveRename").onclick = function() {
+        let newName = document.getElementById("renameProjectInput").value.trim();
 
         if (!newName) return;
 
         projects[index] = newName;
-        savedTypes[index] = newType;
 
         localStorage.setItem("myAIProjects", JSON.stringify(projects));
-        localStorage.setItem("myAIProjectTypes", JSON.stringify(savedTypes));
 
         overlay.remove();
         displayProjects();
