@@ -178,9 +178,25 @@ button:hover{
         flex-direction:column;
     }
 }
+/* Refresh loading effect */
+#refreshLoader{
+    position:fixed;
+    inset:0;
+    background:rgba(7,11,20,.96);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:99999;
+    font-size:22px;
+    font-weight:bold;
+    color:#c4b5fd;
+}
 </style>
 </head>
 <body>
+<div id="refreshLoader">
+    🔄 Loading My AI...
+</div>
 <header>
   🤖 My AI
   <button onclick="goToDashboard()">🏠 Dashboard</button>
@@ -1035,6 +1051,14 @@ window.addEventListener("load", function() {
 
     if (savedPage === "dashboard") {
         goToDashboard();
+    }
+
+    const refreshLoader = document.getElementById("refreshLoader");
+
+    if (refreshLoader) {
+        setTimeout(() => {
+            refreshLoader.style.display = "none";
+        }, 500);
     }
 });
 </script>
