@@ -16,21 +16,22 @@ body{
     min-height:100vh;
 }
 header{
-    background:rgba(10,15,28,.85);
+    background:linear-gradient(135deg,rgba(10,15,28,.95),rgba(49,24,90,.9));
     color:white;
-    padding:18px;
-    font-size:22px;
+    padding:20px 22px;
+    font-size:24px;
     font-weight:bold;
-    box-shadow:0 5px 25px rgba(0,0,0,.35);
-    border-bottom:1px solid rgba(255,255,255,.08);
-    backdrop-filter:blur(12px);
+    box-shadow:
+        0 8px 30px rgba(0,0,0,.45),
+        0 0 30px rgba(124,58,237,.15);
+    border-bottom:1px solid rgba(167,139,250,.25);
+    backdrop-filter:blur(16px);
 }
 .container{
-    max-width:900px;
-    margin:40px auto;
-    padding:20px;
+    max-width:980px;
+    margin:55px auto;
+    padding:24px;
 }
-
 h1{
     text-align:center;
     font-size:40px;
@@ -45,20 +46,67 @@ h1{
 }
 
 .chat{
-    background:rgba(10,15,28,.72);
-    border:1px solid rgba(255,255,255,.08);
-    border-radius:24px;
-    padding:20px;
+    background:
+        linear-gradient(145deg, #111827, #1e1640);
+    border:1px solid #6d4bd8;
+    border-radius:28px;
+    padding:24px;
     min-height:500px;
-    box-shadow:0 20px 60px rgba(0,0,0,.45);
-    backdrop-filter:blur(18px);
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.55),
+        0 0 40px rgba(124,58,237,.25);
+    backdrop-filter:blur(20px);
 }
 
 .message{
-    padding:14px 18px;
-    margin:12px 0;
-    border-radius:16px;
-    max-width:80%;
+    padding:16px 20px;
+    margin:16px 0;
+    border-radius:20px;
+    max-width:75%;
+    line-height:1.55;
+    font-size:16px;
+    box-shadow:0 8px 24px rgba(0,0,0,.3);
+    animation:messageIn .2s ease;
+}
+
+.message.user{
+    background:linear-gradient(135deg,#2563eb,#7c3aed);
+    border:1px solid rgba(167,139,250,.4);
+    border-bottom-right-radius:6px;
+    box-shadow:0 8px 25px rgba(37,99,235,.25);
+}
+
+.message.ai{
+    background:linear-gradient(145deg,#111827,#1b1535);
+    border:1px solid rgba(167,139,250,.28);
+    border-bottom-left-radius:6px;
+    box-shadow:0 8px 25px rgba(0,0,0,.3);
+}
+
+@keyframes messageIn{
+    from{
+        opacity:0;
+        transform:translateY(6px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.message.user{
+    margin-left:auto;
+    background:linear-gradient(135deg,#2563eb,#7c3aed);
+    color:white;
+    border-bottom-right-radius:6px;
+}
+
+.message.ai{
+    margin-right:auto;
+    background:rgba(17,24,39,.9);
+    color:#f8fafc;
+    border:1px solid rgba(167,139,250,.22);
+    border-bottom-left-radius:6px;
 }
 
 .user{
@@ -76,21 +124,36 @@ h1{
 
 .input{
     display:flex;
-    gap:10px;
+    gap:12px;
+    margin-top:18px;
+    padding:10px;
+    background:rgba(17,24,39,.85);
+    border:1px solid rgba(167,139,250,.25);
+    border-radius:18px;
+    box-shadow:0 8px 25px rgba(0,0,0,.25);
 }
 
 input{
     flex:1;
-    padding:15px 18px;
-    border:1px solid rgba(255,255,255,.1);
+    padding:16px 18px;
+    border:1px solid rgba(167,139,250,.28);
     border-radius:14px;
     outline:none;
     box-sizing:border-box;
     transition:0.2s;
     font-size:16px;
-    background:rgba(10,15,28,.85);
+    background:rgba(7,11,20,.9);
     color:white;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.05),
+        0 0 15px rgba(124,58,237,.08);
+}
+
+input:focus{
+    border-color:#8b5cf6;
+    box-shadow:
+        0 0 0 3px rgba(139,92,246,.12),
+        0 0 20px rgba(124,58,237,.15);
 }
 input::placeholder{
     color:#94a3b8;
@@ -102,15 +165,29 @@ input:focus{
 }
 
 button{
-    padding:15px 20px;
-    background:linear-gradient(135deg,#2563eb,#4f46e5);
+    padding:15px 22px;
+    background:linear-gradient(135deg,#2563eb,#7c3aed);
     color:white;
-    border:1px solid rgba(255,255,255,.1);
-    border-radius:12px;
-    transition:0.2s;
+    border:1px solid rgba(167,139,250,.35);
+    border-radius:14px;
+    transition:transform .2s ease, box-shadow .2s ease, filter .2s ease;
     cursor:pointer;
     font-weight:bold;
-    box-shadow:0 8px 25px rgba(37,99,235,.25);
+    box-shadow:
+        0 8px 25px rgba(37,99,235,.28),
+        0 0 18px rgba(124,58,237,.12);
+}
+
+button:hover{
+    transform:translateY(-2px);
+    filter:brightness(1.08);
+    box-shadow:
+        0 12px 30px rgba(37,99,235,.35),
+        0 0 25px rgba(124,58,237,.22);
+}
+
+button:active{
+    transform:scale(.97);
 }
 
 button:hover{
@@ -191,6 +268,46 @@ button:hover{
     font-weight:bold;
     color:#c4b5fd;
 }
+@media (max-width:600px){
+    .container{
+        width:100%;
+        max-width:none;
+        box-sizing:border-box;
+        margin:25px auto;
+        padding:14px;
+    }
+
+    .chat{
+        padding:14px;
+        border-radius:20px;
+        min-height:450px;
+    }
+
+    .message{
+        max-width:85%;
+        font-size:15px;
+    }
+
+    .input{
+        gap:8px;
+        padding:8px;
+    }
+
+    input{
+        min-width:0;
+        font-size:16px;
+    }
+
+    .input button{
+        padding:13px 15px;
+        white-space:nowrap;
+    }
+
+    header{
+        padding:16px;
+        font-size:20px;
+    }
+}
 </style>
 </head>
 <body>
@@ -202,10 +319,35 @@ button:hover{
   <button onclick="goToDashboard()">🏠 Dashboard</button>
 </header>
 <div class="container">
-<h1 style="color:#f8fafc;">My AI Assistant</h1>
-<p class="subtitle" style="color:#c4b5fd;">Ask your AI assistant anything.</p>
+<h1 style="
+    font-size:36px;
+    margin-bottom:8px;
+    background:linear-gradient(90deg,#60a5fa,#a78bfa);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+">
+    My AI Assistant
+</h1>
+<p class="subtitle" style="
+    color:#c4b5fd;
+    font-size:18px;
+    margin-top:0;
+    margin-bottom:28px;
+">
+    Your personal AI, ready when you are.
+</p>
 <div class="chat">
-<button onclick="clearChat()" style="margin:10px;padding:10px 16px;font-size:14px;">New Chat</button>
+<button onclick="clearChat()" style="
+    margin:10px;
+    padding:11px 16px;
+    font-size:14px;
+    background:rgba(124,58,237,.16);
+    color:#c4b5fd;
+    border:1px solid rgba(167,139,250,.3);
+    box-shadow:none;
+">
+    ✨ New Chat
+</button>
 <div id="messages"></div>
 <div class="input">
     <input id="userInput" placeholder="Message My AI...">
@@ -268,9 +410,16 @@ function goToDashboard() {
       <p class="subtitle" style="color:#c4b5fd;">What are you building?</p>
 
         <div style="text-align:center; margin:30px 0;">
-          <button onclick="createProject()" style="padding:16px 24px;font-size:16px;box-shadow:0 10px 30px rgba(37,99,235,.3);">＋ Create New Project</button>
+         <button onclick="createProject()" style="padding:18px 28px;font-size:17px;background:linear-gradient(135deg,#2563eb,#7c3aed);color:white;border:1px solid rgba(167,139,250,.45);border-radius:14px;box-shadow:0 10px 30px rgba(37,99,235,.35),0 0 25px rgba(124,58,237,.2);cursor:pointer;">＋ Create New Project</button>
         </div>
-<h2 style="color:#c4b5fd;">📁 My Projects</h2>
+<h2 style="
+    font-size:28px;
+    margin:35px 0 18px;
+    color:#f8fafc;
+    text-shadow:0 0 18px rgba(167,139,250,.45);
+">
+    📁 My Projects
+</h2>
 
         <div id="projects"></div>
     `;
@@ -309,26 +458,32 @@ function displayProjects() {
         let completed = tasks.filter(task => task === true).length;
         let progress = Math.round((completed / 5) * 100);
 
-        let project = document.createElement("button");
+        let project = document.createElement("div");
 
         project.style.display = "block";
         project.style.width = "100%";
         project.style.margin = "15px 0";
         project.style.padding = "26px";
         project.style.textAlign = "left";
-        project.style.background = "rgba(10,15,28,.82)";
+        project.style.background = "linear-gradient(145deg,rgba(17,24,39,.96),rgba(30,20,60,.92))";
         project.style.color = "#f8fafc";
-       project.style.border = "1px solid rgba(167,139,250,.25)";
+    project.style.border = "2px solid rgba(139,92,246,.65)";
         project.style.borderRadius = "20px";
-        project.style.boxShadow = "0 6px 16px rgba(124,58,237,0.14)";
+        project.style.background = "linear-gradient(145deg,rgba(17,24,39,.96),rgba(30,20,60,.92))";
         project.style.transition = "transform 0.15s ease, box-shadow 0.15s ease";
         project.style.cursor = "pointer";
-        project.onmouseenter = function() {
-    project.style.transform = "translateY(-2px)";
-    project.style.boxShadow = "0 12px 30px rgba(124,58,237,.28)";
+       project.onmouseenter = function() {
+    project.style.transform = "translateY(-4px)";
+    project.style.boxShadow = "0 16px 40px rgba(124,58,237,.35)";
 };
 project.innerHTML = `
-   <div style="font-size:22px;font-weight:bold;color:#f8fafc;">
+   <div style="
+    font-size:27px;
+    font-weight:800;
+    color:#ffffff;
+    text-shadow:0 0 18px rgba(139,92,246,.9);
+    letter-spacing:.3px;
+">
     📁 ${projectName}
 </div>
     <div style="margin-top:8px;color:#777;">
@@ -353,40 +508,63 @@ project.onmouseleave = function() {
     📁 ${projectName}
 </div>
 
-<div style="color:#a78bfa;margin-top:8px;">
+<div style="
+    color:#c4b5fd;
+    margin-top:8px;
+    font-size:14px;
+    font-weight:bold;
+    letter-spacing:.3px;
+">
     🚀 Project Workspace
-</div>
-          <div style="margin-top:15px;font-weight:bold;color:#a78bfa;">
+<div style="
+    margin-top:15px;
+    font-weight:bold;
+    font-size:18px;
+    color:#c4b5fd;
+    text-shadow:0 0 12px rgba(167,139,250,.45);
+">
     Progress: ${progress}%
 </div>
 
-            <div style="background:#ddd6fe;border-radius:10px;height:10px;margin-top:8px;">
-               <div style="background:linear-gradient(90deg,#2563eb,#7c3aed);width:${progress}%;height:10px;border-radius:10px;"></div>
+           <div style="
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(167,139,250,.18);
+    border-radius:10px;
+    height:12px;
+    margin-top:8px;
+    overflow:hidden;
+">
+               <div style="background:linear-gradient(90deg,#2563eb,#7c3aed);width:${progress}%;height:12px;border-radius:10px;"></div>
             </div>
 
             <div style="color:#555;margin-top:8px;">
     🏷️ ${projectType}
 </div>
-            <div style="color:#6d5aa8;margin-top:8px;">
-                ${completed}/5 tasks completed
-            </div>
+          <div style="
+    color:#f5f3ff;
+    margin-top:10px;
+    font-size:15px;
+    font-weight:bold;
+    text-shadow:0 0 10px rgba(167,139,250,.6);
+">
+    ${completed}/5 tasks completed
+</div>
            <div style="margin-top:15px;">
             
-    <button
-   onclick="event.stopPropagation(); renameProject(event, ${index})"
-   style="background:linear-gradient(135deg,#2563eb,#4f46e5);color:white;padding:8px 12px;border:1px solid rgba(255,255,255,.1);border-radius:8px;cursor:pointer;">
-   ✏️ Rename
+   <button
+    onclick="event.stopPropagation(); renameProject(event, ${index})"
+    style="background:linear-gradient(135deg,#2563eb,#4f46e5);color:white;padding:10px 14px;border:1px solid rgba(167,139,250,.35);border-radius:10px;cursor:pointer;font-weight:bold;">
+    ✏️ Rename
 </button>
 
 <button
-    onclick="openProjectSettings(event, ${index})"
-    style="margin-left:8px;background:rgba(124,58,237,.18);color:#c4b5fd;padding:8px 12px;border:1px solid rgba(167,139,250,.35);border-radius:8px;cursor:pointer;"">
+   onclick="event.preventDefault(); event.stopPropagation(); openProjectSettings(event, ${index}); return false;"
+    style="margin-left:8px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#f5f3ff;padding:10px 14px;border:1px solid rgba(167,139,250,.4);border-radius:10px;cursor:pointer;font-weight:bold;">
     ⚙️ Settings
 </button>
-
     <button
     onclick="deleteProject(event, ${index})"
-  style="margin-left:8px;background:rgba(239,68,68,.15);color:#fca5a5;padding:8px 12px;border:1px solid rgba(239,68,68,.35);border-radius:8px;cursor:pointer;"">
+ style="margin-left:8px;background:rgba(239,68,68,.15);color:#fca5a5;padding:9px 13px;border:1px solid rgba(239,68,68,.4);border-radius:9px;cursor:pointer;font-weight:bold;">
     🗑️ Delete
 </button>
 </div>
@@ -672,6 +850,76 @@ function renameProject(event, index) {
         projects[index] = newName;
 
         localStorage.setItem("myAIProjects", JSON.stringify(projects));
+
+        overlay.remove();
+        displayProjects();
+    };
+}
+function openProjectSettings(event, index) {
+    event.stopPropagation();
+
+    let projects = JSON.parse(localStorage.getItem("myAIProjects")) || [];
+    let savedTypes = JSON.parse(localStorage.getItem("myAIProjectTypes")) || {};
+
+    let projectName = projects[index] || "Project";
+    let projectType = savedTypes[index] || "Website";
+
+    let overlay = document.createElement("div");
+
+    overlay.innerHTML = `
+        <div style="position:fixed;inset:0;background:rgba(0,0,0,.65);
+        display:flex;align-items:center;justify-content:center;
+        z-index:9999;padding:20px;">
+        <div style="width:min(420px,100%);
+            background:linear-gradient(145deg,#0d1220,#17122b);
+            border:1px solid rgba(167,139,250,.3);
+            border-radius:20px;padding:25px;
+            color:#f8fafc;">
+
+                <h2>⚙️ Project Settings</h2>
+
+                <label>🏷️ Project Name</label>
+                <input id="settingsProjectName"
+                value="${projectName.replace(/"/g, "&quot;")}"
+                style="width:100%;box-sizing:border-box;
+                padding:12px;margin:8px 0 18px;">
+                <label>📋 Project Type</label>
+                <select id="settingsProjectType"
+                style="width:100%;padding:12px;margin-top:8px;">
+                    <option>Website</option>
+                    <option>Gaming</option>
+                    <option>App</option>
+                    <option>Business</option>
+                    <option>AI Project</option>
+                    <option>Other</option>
+                </select>
+
+                <div style="display:flex;gap:10px;margin-top:20px;">
+                    <button id="cancelProjectSettings">Cancel</button>
+                    <button id="saveProjectSettings">💾 Save Changes</button>
+                </div>
+                </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    document.getElementById("settingsProjectType").value = projectType;
+
+    document.getElementById("cancelProjectSettings").onclick = function() {
+        overlay.remove();
+    };
+    document.getElementById("saveProjectSettings").onclick = function() {
+        let newName = document.getElementById("settingsProjectName").value.trim();
+        let newType = document.getElementById("settingsProjectType").value;
+
+        if (!newName) return;
+
+        projects[index] = newName;
+        savedTypes[index] = newType;
+
+        localStorage.setItem("myAIProjects", JSON.stringify(projects));
+        localStorage.setItem("myAIProjectTypes", JSON.stringify(savedTypes));
 
         overlay.remove();
         displayProjects();
