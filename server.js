@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
+const rateLimit = require("express-rate-limit");
 const OpenAI = require("openai");
 
 const app = express();
@@ -10,20 +11,42 @@ const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-app.use(express.json());
-app.use(express.static("."));
+const chatLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 30,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  message: {
+    error: "Too many requests. Please try again later."
+  }
+});
 
-let conversationHistory = [];
+app.use(express.json({ limit: "10kb" }));
+app.use(express.static("."));
+app.use("/api/chat", chatLimiter);
+const conversationHistories = new Map();
 
 app.post("/api/chat", async (req, res) => {
   try {
     const message = req.body.message;
+const conversationId = req.headers["x-conversation-id"];
 
-    conversationHistory.push({
-      role: "user",
-      content: message
-    });
+    if (!conversationId) {
+  return res.status(400).json({
+    error: "Missing conversation ID."
+  });
+}
 
+if (!conversationHistories.has(conversationId)) {
+  conversationHistories.set(conversationId, []);
+}
+
+const conversationHistory = conversationHistories.get(conversationId);
+
+conversationHistory.push({
+  role: "user",
+  content: message
+});
     const stream = await client.responses.create({
   model: "gpt-5-mini",
   instructions: "You are a helpful, friendly AI assistant. Give clear, accurate, and useful answers. Keep responses easy to understand.",
@@ -56,7 +79,12 @@ res.json({
   }
 });
 app.post("/api/clear", (req, res) => {
-  conversationHistory = [];
+  const conversationId = req.headers["x-conversation-id"];
+
+  if (conversationId) {
+    conversationHistories.delete(conversationId);
+  }
+
   res.json({ success: true });
 });
 

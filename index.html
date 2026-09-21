@@ -433,7 +433,7 @@ function createProject() {
 
     let projects = JSON.parse(localStorage.getItem("myAIProjects")) || [];
 
-    projects.push(projectName);
+   projects.push(projectName);
 
     localStorage.setItem("myAIProjects", JSON.stringify(projects));
 
@@ -659,35 +659,58 @@ let projectDescription =
     </div>
 </div>
     <div style="margin-top:30px;">
-    <h2 style="margin-bottom:12px;">📝 Notes</h2>
-    <div style="
-        padding:18px;
-        background:rgba(15,23,42,0.6);
-        border:1px solid rgba(167,139,250,0.25);
-        border-radius:16px;
-    ">
-        <h3 style="margin-top:0;color:#c4b5fd;">Project Notes</h3>
-        <h2 style="margin-top:30px;">🤖 AI Project Partner</h2>
+   <div style="
+    padding:20px;
+    background:linear-gradient(145deg,rgba(17,24,39,.95),rgba(30,20,60,.9));
+    border:2px solid rgba(139,92,246,.45);
+    border-radius:18px;
+    box-shadow:0 10px 30px rgba(124,58,237,.18);
+">
 
 <div style="margin:25px 0;padding:20px;background:linear-gradient(135deg,rgba(124,58,237,0.35),rgba(37,99,235,0.3),rgba(219,39,119,0.25));border:1px solid #ddd;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,0.06);">
 
     <p style="color:#777;margin-top:0;">
         Your AI partner will help you build this project.
     </p>
-<div id="projectAIMessage" style="margin:15px 0;max-height:350px;overflow-y:auto;padding:16px;background:rgba(15,23,42,0.6);border:1px solid rgba(167,139,250,0.3);border-radius:14px;color:#f8fafc;">
+<div id="projectAIMessage" style="margin:15px 0;max-height:350px;overflow-y:auto;padding:18px;background:linear-gradient(145deg,rgba(17,24,39,.95),rgba(30,20,60,.9));border:2px solid rgba(139,92,246,.55);border-radius:18px;color:#f8fafc;box-shadow:0 10px 35px rgba(124,58,237,.2);">
         👋 I'm ready to help with your project!
     </div>
 
     <div style="display:flex;gap:10px;margin-top:15px;">
         <input
-            id="projectAIInput"
-            placeholder="Ask your AI project partner..."
-            style="flex:1;padding:14px;border:1px solid rgba(167,139,250,0.4);border-radius:12px;box-sizing:border-box;background:rgba(15,23,42,0.85);color:white;outline:none;"
-        >
-
-        <button onclick="askProjectAI()">
-            Ask AI 🤖
-        </button>
+    id="projectAIInput"
+    placeholder="Ask your AI project partner..."
+    style="
+        flex:1;
+        padding:16px 18px;
+        border:2px solid rgba(139,92,246,.55);
+        border-radius:14px;
+        box-sizing:border-box;
+        background:linear-gradient(145deg,rgba(7,11,20,.95),rgba(30,20,60,.9));
+        color:white;
+        outline:none;
+        font-size:16px;
+        box-shadow:0 0 20px rgba(124,58,237,.15);
+    "
+>
+<button
+    onclick="askProjectAI()"
+    style="
+        padding:15px 22px;
+        background:linear-gradient(135deg,#2563eb,#7c3aed);
+        color:white;
+        border:1px solid rgba(167,139,250,.45);
+        border-radius:14px;
+        cursor:pointer;
+        font-weight:bold;
+        font-size:15px;
+        box-shadow:
+            0 8px 25px rgba(37,99,235,.3),
+            0 0 22px rgba(124,58,237,.2);
+    "
+>
+    Ask AI 🤖
+</button>
     </div>
 
 </div>
@@ -983,6 +1006,12 @@ function closeProjectSettings() {
     }
 }
 function askProjectAI() {
+    const conversationId =
+        localStorage.getItem("myAIConversationId") ||
+        crypto.randomUUID();
+
+    localStorage.setItem("myAIConversationId", conversationId);
+
     let input = document.getElementById("projectAIInput");
     let text = input.value.trim();
 
@@ -1005,8 +1034,9 @@ function askProjectAI() {
     fetch("/api/chat", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
-        },
+    "Content-Type": "application/json",
+    "x-conversation-id": conversationId
+},
         body: JSON.stringify({
            message:
     "You are the AI Project Partner for My AI. " +
@@ -1137,8 +1167,14 @@ function sendMessage(){
     fetch("/api/chat", {
     method: "POST",
     headers: {
-        "Content-Type": "application/json"
-    },
+    "Content-Type": "application/json",
+  "x-conversation-id": localStorage.getItem("myAIConversationId") ||
+    (() => {
+        const id = crypto.randomUUID();
+        localStorage.setItem("myAIConversationId", id);
+        return id;
+    })()
+},
     body: JSON.stringify({
         message: text
     })
